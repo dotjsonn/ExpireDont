@@ -1,5 +1,6 @@
 import express from 'express'
 import bcrypt from 'bcryptjs'
+import cors from 'cors'
 import { Pool } from 'pg'
 import 'dotenv/config'
 
@@ -14,8 +15,17 @@ const pool = new Pool({
   port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432
 })
 
+app.use(cors())
+
+
 app.get('/', (req, res) => {
   res.send("Hello User")
+})
+
+app.get('/api/users', async (req, res) => {
+  const query = `SELECT id, name, email FROM users`
+  const result = await pool.query(query)
+  res.json(result.rows)
 })
 
 app.post('/api/users', async (req, res) => {
